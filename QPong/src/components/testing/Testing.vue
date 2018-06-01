@@ -2,11 +2,19 @@
   <div>
     <div class="container-fluid container-test">
       <div class="row">
-        <div class="col-md-1 col-sm-1 col-1">1.</div>
-        <div class="col-md-11 col-sm-11 col-11">
+        <div class="col-md-1 col-sm-1 col-1 container-test-item">1.</div>
+        <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
+          <button class="btn btn-default btn-sm" @click="fetchTest_1()">go</button>
           invoke a fake json api server to get back some response:
           with the courtesy of <span class="powered success-color-dark white-font">https://jsonplaceholder.typicode.com/posts/2</span>
-          <p/><button class="btn btn-default btn-sm" @click="fetchTest_1()">go</button>
+        </div>
+      </div>
+      <!-- testing on the go server -->
+      <div class="row">
+        <div class="col-md-1 col-sm-1 col-1 container-test-item">2.</div>
+        <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
+          <button class="btn btn-default btn-sm" @click="fetchTest_2()">go</button>
+          invoke <span class="powered success-color-dark white-font">QPongServer</span> on a testing api
         </div>
       </div>
     </div>
@@ -60,6 +68,21 @@ export default {
         },
         dataType: null
       }) // end -- jquery.get()
+    },
+    /*
+     *  fetch the testing results from QPongServer
+     */
+    fetchTest_2: function () {
+      let ref = this
+      window.jquery.get({
+        url: 'http://localhost:8081/testing/101',
+        data: null,
+        success: function (data, sStatus, jqXhr) {
+          ref.testResults[1] = data
+          updateTestArea(ref, 1)
+        },
+        dataType: null
+      }) // end -- jquery.get()
     }
   }
 }
@@ -85,8 +108,18 @@ export default {
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 4px;
+  line-height: 2em;
 }
 .white-font {
   color: #eee;
+}
+.container-test-bottom {
+  border-bottom: 1px solid #aaa;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.container-test-item {
+  margin-top: 16px;
+  margin-bottom: 8px;
 }
 </style>

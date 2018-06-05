@@ -22,9 +22,9 @@
       <div class="row">
           <div class="col-md-1 col-sm-1 col-1 container-test-item">3.</div>
           <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
-            <form action="javascript:void(0)" method="post" enctype="multipart/form-data">
+            <form v-on:submit.prevent="uploadTest_1" method="post" enctype="multipart/form-data">
               <input class="form-control form-control-file" type="file" name="pfile" id="pfile" />
-              <button class="btn btn-default btn-sm" @click="uploadTest_1()">go</button>
+              <button type="submit" class="btn btn-default btn-sm">go</button>
               perform a file upload operation to <span class="powered success-color-dark white-font">QPongServer</span>
             </form>
           </div>
@@ -99,22 +99,27 @@ export default {
     /*
      *  method to test file upload
      */
-    uploadTest_1: function () {
+    uploadTest_1: function (event) {
+      // no submit...
+      event.preventDefault()
+      // console.log(window.jquery('#pfile'))
+
       let fileObj = window.jquery('#pfile')
       if (fileObj.length > 0) {
         let formData = new FormData()
 
         fileObj = fileObj[0]
-        for (let i = 0; i < fileObj.length; i++) {
-          let file = fileObj[i]
+        let filesLen = fileObj.files.length
+
+        for (let i = 0; i < filesLen; i++) {
+          let file = fileObj.files[i]
           // Check the file type.
-          if (!file.type.match('image.*')) {
+          if (!file.type.match('image/.*')) {
             continue
           }
           // Add the file to the request.
-          formData.append('pfile[]', file, file.name)
-        } // end -- for (files inside the fileObj)
-
+          formData.append('pfile', file, file.name)
+        } // end -- for (filesLen)
         // ajax call
         window.jquery.ajax({
           url: 'http://localhost:8081/testing/101',

@@ -8,7 +8,7 @@ module.exports = {
   env: {
     browser: true,
   },
-  // added for jquery support
+  // ** added for jquery support
   globals: {
     "$": true,
     "jQuery": true

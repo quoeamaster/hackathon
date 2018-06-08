@@ -1,25 +1,26 @@
 <template>
   <div>
-    <div class="container-fluid container-test">
-      <div class="row">
-        <div class="col-md-1 col-sm-1 col-1 container-test-item">1.</div>
-        <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
-          <button class="btn btn-default btn-sm" @click="fetchTest_1()">go</button>
-          invoke a fake json api server to get back some response:
-          with the courtesy of <span class="powered success-color-dark white-font">https://jsonplaceholder.typicode.com/posts/2</span>
+    <div class="container-fluid container-test" style="overflow: auto;">
+      <div>
+        <div class="row">
+          <div class="col-md-1 col-sm-1 col-1 container-test-item">1.</div>
+          <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
+            <button class="btn btn-default btn-sm" @click="fetchTest_1()">go</button>
+            invoke a fake json api server to get back some response:
+            with the courtesy of <span class="powered success-color-dark white-font">https://jsonplaceholder.typicode.com/posts/2</span>
+          </div>
         </div>
-      </div>
-      <!-- testing on the go server -->
-      <div class="row">
-        <div class="col-md-1 col-sm-1 col-1 container-test-item">2.</div>
-        <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
-          <button class="btn btn-default btn-sm" @click="fetchTest_2()">go</button>
-          invoke <span class="powered success-color-dark white-font">QPongServer</span> on a testing api
+        <!-- testing on the go server -->
+        <div class="row">
+          <div class="col-md-1 col-sm-1 col-1 container-test-item">2.</div>
+          <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
+            <button class="btn btn-default btn-sm" @click="fetchTest_2()">go</button>
+            invoke <span class="powered success-color-dark white-font">QPongServer</span> on a testing api
+          </div>
         </div>
-      </div>
-      <!-- testing on upload -->
-      <!-- testing on the go server -->
-      <div class="row">
+        <!-- testing on upload -->
+        <!-- testing on the go server -->
+        <div class="row">
           <div class="col-md-1 col-sm-1 col-1 container-test-item">3.</div>
           <div class="col-md-11 col-sm-11 col-11 container-test-bottom">
             <form v-on:submit.prevent="uploadTest_1" method="post" enctype="multipart/form-data">
@@ -28,7 +29,9 @@
               perform a file upload operation to <span class="powered success-color-dark white-font">QPongServer</span>
             </form>
           </div>
+        </div>
       </div>
+      <!-- end of inner container -->
     </div>
     <!-- result panels -->
     <div>
@@ -63,8 +66,7 @@ export default {
   },
   props: [],
   // any just "mounted" actions to take place during this lifecycle hook
-  mounted: function () {
-  },
+  mounted: function () {},
   // any variable change watcher actions
   watch: {},
   // biz methods of this component / app
@@ -102,7 +104,6 @@ export default {
     uploadTest_1: function (event) {
       // no submit...
       event.preventDefault()
-      // console.log(window.jquery('#pfile'))
 
       let fileObj = window.jquery('#pfile')
       if (fileObj.length > 0) {
@@ -121,27 +122,25 @@ export default {
           formData.append('pfile', file, file.name)
         } // end -- for (filesLen)
         // ajax call
-        window.jquery.ajax({
-          url: 'http://localhost:8081/testing/101',
-          type: 'POST',
-          headers: {
+        window.JQueryService.methods.ajaxUpload(
+          window.jQuery,
+          'http://localhost:8081/testing/101',
+          {
             'X-My-Header': 'something'
           },
-          data: formData,
-          cache: false,
-          dataType: 'json',
-          processData: false, // NEVER process the file(s)
-          contentType: false, // NEVER set contentType
-          success: function (data, textStatus, jqXHR) {
-            console.log('*success => ' + textStatus)
-            console.log(data)
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
+          formData,
+          null,
+          function (jqXHR, textStatus, errorThrown) {
             console.log('** error => ' + textStatus)
             console.log(errorThrown)
           }
-        })
+        )
       } // end -- if (fileObj is valid)
+    },
+    /*
+     *  method to test the submission simulation
+     */
+    submission_qpong_1: function () {
     }
   }
 }
@@ -150,7 +149,7 @@ export default {
 <style scoped>
 .container-test {
   min-height: 200px;
-  max-height: 600px;
+  max-height: 350px;
 }
 .container-results {
   width: 100%;

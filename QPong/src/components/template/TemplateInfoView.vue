@@ -72,12 +72,14 @@ export default {
   methods: {
     fwdTemplateBackgroundPicker: function () {
       // update the states
-      window.DataStore.commit('setTemplateInfo',
+      window.DataStore.commit(
+        'template/setTemplateInfo',
         {
           title: this.title,
           subtitle: this.subtitle,
           description: this.description
-        })
+        }
+      )
       this.$router.push({ name: 'templatebackgroundpickerview' })
     },
     /**
@@ -96,12 +98,14 @@ export default {
     },
     saveInfo: function () {
       // update the states
-      window.DataStore.commit('setTemplateInfo',
+      window.DataStore.commit(
+        'template/setTemplateInfo',
         {
           title: this.title,
           subtitle: this.subtitle,
           description: this.description
-        })
+        }
+      ) // commit the states to the store
     }
   }
 }

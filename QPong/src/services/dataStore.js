@@ -3,21 +3,28 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+// module definitions
+// QPong template form values
+let modTemplate = {
+  namespaced: true,
   state: {
-    // QPong template form values
-    template: {
-      title: '',
-      subtitle: '',
-      description: ''
-    }
+    title: '',
+    subtitle: '',
+    description: ''
   },
   mutations: {
     // method to update the template info related values back to state.template object
     setTemplateInfo (state, model) {
-      state.template.title = model['title']
-      state.template.subtitle = model['subtitle']
-      state.template.description = model['description']
+      state.title = model['title']
+      state.subtitle = model['subtitle']
+      state.description = model['description']
     }
+  }
+}
+
+export default new Vuex.Store({
+  // define the modules
+  modules: {
+    template: modTemplate
   }
 })

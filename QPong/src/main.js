@@ -16,9 +16,11 @@ import 'jquery/dist/jquery.js'
 
 // add services to the window object
 import JQueryService from './services/JQueryService.vue'
+import IdGenerator from './services/idGenerator'
 
 window.JQueryService = JQueryService
 window.DataStore = DataStore
+window.IdGenerator = IdGenerator
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

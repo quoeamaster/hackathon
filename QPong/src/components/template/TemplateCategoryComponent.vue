@@ -72,7 +72,6 @@ export default {
     },
     /**
      * should display the icon-checked?
-     * TODO: onclick change... the picked value (call back to parent)
      */
     getIconCheckedCss: function () {
       if (this.picked) {

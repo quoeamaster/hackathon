@@ -1,16 +1,31 @@
 <template>
   <div>
-    <!--category-comp v-bind:instanceId="generateComponentId('c-btn')"></category-comp>
-    <category-comp v-bind:instanceId="generateComponentId('c-btn')"></category-comp-->
+    <!-- list out the common categories -->
     <category-comp v-for="item in componentsInfo['commonCats']"
                    v-bind:instanceId="item.instanceId"
                    v-bind:title="item.title"
                    v-bind:image="item.image"
+                   v-bind:picked="item.picked"
+                   v-on:onCategoryButtonClick="handleCatBtnClick"
+                   :key="item.instanceId" ></category-comp>
+    <hr class="t-hr">
+    <!-- list out the suggested categories -->
+    <category-comp v-for="item in componentsInfo['suggestedCats']"
+                   v-bind:instanceId="item.instanceId"
+                   v-bind:title="item.title"
+                   v-bind:image="item.image"
+                   v-bind:picked="item.picked"
+                   v-on:onCategoryButtonClick="handleCatBtnClick"
                    :key="item.instanceId" ></category-comp>
   </div>
 </template>
 
-<style></style>
+<style>
+.t-hr {
+  color: lavender;
+  width: 98%;
+}
+</style>
 
 <script>
 // ** import a child component
@@ -34,14 +49,14 @@ export default {
     // TODO call service to load the suitable categories from QPong server (etc); MOCKUP for now
     this.componentsInfo = {
       commonCats: [
-        { title: 'common', image: '/static/assets/images/category/cat_common_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
-        { title: 'popular', image: '/static/assets/images/category/cat_popular_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
+        { title: 'common', picked: false, image: '/static/assets/images/category/cat_common_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { title: 'popular', picked: false, image: '/static/assets/images/category/cat_popular_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
       ],
       suggestedCats: [
-        { title: 'clothings', instanceId: this.generateComponentId('c-b') },
-        { title: 'beverage', instanceId: this.generateComponentId('c-b') },
-        { title: 'cakes', instanceId: this.generateComponentId('c-b') },
-        { title: 'toys', instanceId: this.generateComponentId('c-b') }
+        { title: 'clothings', picked: false, image: '/static/assets/images/category/cat_clothings_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { title: 'beverage', picked: false, image: '/static/assets/images/category/cat_beverage_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { title: 'cakes', picked: false, image: '/static/assets/images/category/cat_cakes_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { title: 'toys', picked: false, image: '/static/assets/images/category/cat_toys_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
       ]
     } // setting the componentsInfo (mockup for now...)
   },
@@ -53,6 +68,32 @@ export default {
       }
       this.componentIdList.push(id)
       return id
+    },
+    handleCatBtnClick: function (params) {
+      // update the componentsInfo's picked status
+      // depends on the biz logic, you might want to de-activate other components' picked status
+      let component = this._getComponentByInstanceId(params.instanceId)
+      if (component) {
+        component.picked = params.picked
+      }
+    },
+    _getComponentByInstanceId: function (iId) {
+      let compList = this.componentsInfo.commonCats
+      // try commonCats
+      for (let i = 0; i < compList.length; i++) {
+        let item = compList[i]
+        if (item.instanceId === iId) {
+          return item
+        }
+      }
+      // try suggestedCats
+      compList = this.componentsInfo.suggestedCats
+      for (let i = 0; i < compList.length; i++) {
+        let item = compList[i]
+        if (item.instanceId === iId) {
+          return item
+        }
+      }
     }
   },
   // ** set the child components here => categoryComp = <category-comp>

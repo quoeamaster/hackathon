@@ -1,8 +1,11 @@
 <template>
   <!-- set the id of the instance; so that jquery could query back the html parts -->
-  <span v-bind:id="componentId" class="c-container">
+  <span v-bind:id="componentId" class="c-container" @click="raiseEvent()">
     <img :src="image" class="c-image c-container-shadow">
     <span class="c-label" v-bind:style="getLabelCss()" >{{title}}</span>
+    <img src="/static/assets/images/icon_checked.png"
+         v-bind:class="getIconCheckedCss()"
+         class="c-check-icon" />
   </span>
 </template>
 
@@ -10,6 +13,9 @@
 .c-container {
   border-radius: 2px;
   cursor: pointer;
+  /* added to add a spacing between consecutive element(s) */
+  margin-bottom: 8px;
+  display: inline-block;
 }
 .c-image {
   width: 120px;
@@ -27,6 +33,16 @@
   color: #fff; /* FFFAF0 */
   text-shadow: 2px 2px rgba(0,0,0,0.7);
 }
+.c-check-icon {
+  visibility: hidden;
+  width: 16px;
+  position: relative;
+  top: -12px;
+  left: -36px;
+  margin-right: -16px;
+}
+.c-visible { visibility: visible; }
+.c-hidden { visibility: hidden; }
 </style>
 
 <script>
@@ -48,6 +64,23 @@ export default {
     }, 1)
   },
   methods: {
+    raiseEvent: function () {
+      this.$emit('onCategoryButtonClick', {
+        instanceId: this.componentId,
+        picked: !this.picked
+      })
+    },
+    /**
+     * should display the icon-checked?
+     * TODO: onclick change... the picked value (call back to parent)
+     */
+    getIconCheckedCss: function () {
+      if (this.picked) {
+        return { 'c-visible': true, 'c-hidden': false }
+      } else {
+        return { 'c-visible': false, 'c-hidden': true }
+      }
+    },
     /**
      * calculate the dimensions for the "c-label" part
      * @returns {*}
@@ -89,7 +122,7 @@ export default {
   },
   // instanceId = id of this component; useful to identify which component it is
   // when multiple instances are available within a view
-  props: [ 'instanceId', 'title', 'image' ],
+  props: [ 'instanceId', 'title', 'image', 'picked' ],
   computed: {
     componentId: function () {
       return this.instanceId

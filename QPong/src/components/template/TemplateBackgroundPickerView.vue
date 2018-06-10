@@ -2,7 +2,11 @@
   <div>
     <!--category-comp v-bind:instanceId="generateComponentId('c-btn')"></category-comp>
     <category-comp v-bind:instanceId="generateComponentId('c-btn')"></category-comp-->
-    <category-comp v-for="item in componentsInfo['commonCats']" v-bind:instanceId="item.instanceId" :key="item.instanceId" ></category-comp>
+    <category-comp v-for="item in componentsInfo['commonCats']"
+                   v-bind:instanceId="item.instanceId"
+                   v-bind:title="item.title"
+                   v-bind:image="item.image"
+                   :key="item.instanceId" ></category-comp>
   </div>
 </template>
 
@@ -30,8 +34,8 @@ export default {
     // TODO call service to load the suitable categories from QPong server (etc); MOCKUP for now
     this.componentsInfo = {
       commonCats: [
-        { title: 'common', instanceId: this.generateComponentId('c-b') },
-        { title: 'popular', instanceId: this.generateComponentId('c-b') }
+        { title: 'common', image: '/static/assets/images/category/cat_common_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { title: 'popular', image: '/static/assets/images/category/cat_popular_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
       ],
       suggestedCats: [
         { title: 'clothings', instanceId: this.generateComponentId('c-b') },

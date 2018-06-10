@@ -6,7 +6,7 @@
         <i class="fa fa-paint-brush" style="font-size: 14px; color: darkgreen;" aria-hidden="true"></i>
       </label>
       <span class="pull-right t-caption-right" @click="fwdTemplateHome()">
-        <i class="fa fa-home -hand-pointer-o" aria-hidden="true"></i>
+        <i class="fa fa-home t-icon" aria-hidden="true"></i>
       </span>
     </div>
     <div class="t-content">
@@ -29,6 +29,9 @@
 }
 .t-caption-right {
   padding-right: 8px;
+}
+.t-icon {
+  cursor: pointer;
 }
 </style>
 

@@ -122,6 +122,9 @@ export default {
             let item = this.pickedComponentList[i]
             if (item.instanceId === params.instanceId) {
               // reset the inner itemList "picked" value as well
+              if (!item.itemList) {
+                continue
+              }
               let size1 = item.itemList.length
               for (let i1 = 0; i1 < size1; i1++) {
                 item.itemList[i1].picked = false

@@ -1,9 +1,11 @@
 <template>
-  <span class="lo-container lo-tooltip" @click="raiseEvent()" :title="title">
-    <img v-bind:src="image" class="lo-image lo-image-shadow" />
+  <span class="lo-container lo-tooltip" :title="title">
+    <img v-bind:src="image" class="lo-image lo-image-shadow" @click="raiseEvent($event)" />
     <img src="/static/assets/images/icon_checked.png"
          v-bind:class="getIconCheckedCss()"
+         @click="raiseEvent($event)"
          class="lo-check-icon" />
+    <i class="fa fa-search lo-icon-green" aria-hidden="true" @click="preview()"></i>
   </span>
 </template>
 
@@ -32,6 +34,13 @@
   top: -24px;
   left: -36px;
   margin-right: -16px;
+}
+.lo-icon-green {
+  color: #FFFAF0; /* rgb(85,216,174); */
+  position: relative;
+  top: -22px;
+  left: -188px;
+  margin-right: -8px;
 }
 .lo-visible { visibility: visible; }
 .lo-hidden { visibility: hidden; }
@@ -96,12 +105,20 @@ export default {
     /**
      * raise event back to the parent
      */
-    raiseEvent: function () {
+    raiseEvent: function (event) {
+      event.preventDefault()
+
       this.$emit('onCategoryListOptionClick', {
         instanceId: this.instanceId,
         picked: !this.picked,
         image: this.image
       })
+    },
+    /**
+     * preview the target image
+     */
+    preview: function () {
+      console.log('*** inside preview ***')
     }
   }
 }

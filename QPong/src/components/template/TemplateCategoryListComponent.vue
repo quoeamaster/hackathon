@@ -1,18 +1,29 @@
 <template>
-  <div class="l-container">
-    <category-list-option-comp v-for="item in itemList"
-                               :key="item.instanceId"
-                               v-on:onCategoryListOptionClick="handleListOptionClick"
-                               v-bind:image="item.image"
-                               v-bind:picked="item.picked"
-                               v-bind:title="item.title"
-                               v-bind:instanceId="item.instanceId"></category-list-option-comp>
+  <div>
+    <div class="l-container l-scrollable-container">
+      <div>
+        <category-list-option-comp v-for="item in itemList"
+                                   :key="item.instanceId"
+                                   v-on:onCategoryListOptionClick="handleListOptionClick"
+                                   v-bind:image="item.image"
+                                   v-bind:picked="item.picked"
+                                   v-bind:title="item.title"
+                                   v-bind:instanceId="item.instanceId"></category-list-option-comp>
+      </div>
+    </div>
+    <button class="btn btn-primary">next</button>
   </div>
 </template>
 
 <style>
 .l-container {
   border-radius: 2px;
+}
+.l-scrollable-container {
+  /* border: 1px solid; */
+  max-height: 300px;
+  overflow: auto;
+  margin-bottom: 20px;
 }
 </style>
 

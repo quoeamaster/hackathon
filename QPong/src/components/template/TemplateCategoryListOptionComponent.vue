@@ -118,7 +118,12 @@ export default {
      * preview the target image
      */
     preview: function () {
-      console.log('*** inside preview ***')
+      event.preventDefault()
+
+      this.$emit('onCategoryListOptionImgPreview', {
+        instanceId: this.instanceId,
+        image: this.image
+      })
     }
   }
 }

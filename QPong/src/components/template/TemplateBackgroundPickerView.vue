@@ -4,6 +4,7 @@
     <!-- list out the common categories -->
     <category-comp v-for="item in componentsInfo['commonCats']"
                    v-bind:instanceId="item.instanceId"
+                   v-bind:id="item.id"
                    v-bind:title="item.title"
                    v-bind:image="item.image"
                    v-bind:picked="item.picked"
@@ -13,6 +14,7 @@
     <!-- list out the suggested categories -->
     <category-comp v-for="item in componentsInfo['suggestedCats']"
                    v-bind:instanceId="item.instanceId"
+                   v-bind:id="item.id"
                    v-bind:title="item.title"
                    v-bind:image="item.image"
                    v-bind:picked="item.picked"
@@ -20,7 +22,15 @@
                    :key="item.instanceId" ></category-comp>
     <hr class="t-hr">
     <div class="t-main-label">Option List</div>
-    <category-list-comp v-bind:itemList="getAllCategoryListItems()" ></category-list-comp>
+    <!-- the option list (with image / background) -->
+    <category-list-comp
+      v-on:onOptionImageClick="handleOptionImageClick"
+      v-bind:itemList="getAllCategoryListItems()" ></category-list-comp>
+    <div class="t-btn-container">
+      <button class="btn btn-orange" @click="fwdToInfo($event)">back</button>
+      <button class="btn btn-secondary" @click="handleSaveImgList">save</button>
+      <button class="btn btn-primary" @click="fwdToPreview($event)">next</button>
+    </div>
   </div>
 </template>
 
@@ -36,6 +46,9 @@
   margin-left: 4px;
   margin-bottom: 4px;
 }
+.t-btn-container {
+  margin-top: 40px;
+}
 </style>
 
 <script>
@@ -50,7 +63,9 @@ function ModelTemplateBackgroundPickerView () {
     // the category-component(s) queried for display
     componentsInfo: {},
     // the picked component(s)
-    pickedComponentList: []
+    pickedComponentList: [],
+    // the picked image option list
+    pickedImageList: []
   }
 }
 
@@ -60,33 +75,40 @@ export default {
     return new ModelTemplateBackgroundPickerView()
   },
   mounted: function () {
+    // update the state's pickedImageList
+    // TODO: handle the imageList and componentList updates on the array
+    // this.pickedImageList = window.DataStore.state.template.pickedImageList
+    // this.pickedComponentList = window.DataStore.state.template.pickedCategoryList
+
     // TODO call service to load the suitable categories from QPong server (etc); MOCKUP for now
     this.componentsInfo = {
       commonCats: [
         {
+          id: '0001',
           title: 'common',
           picked: false,
           image: '/static/assets/images/category/cat_common_bkg_btn.jpg',
           instanceId: this.generateComponentId('c-b'),
           itemList: [
-            { title: 'pokemon pikachiu', picked: false, image: '/static/assets/images/category/list/cat_toy_pokemon_pikachiu_bkg.jpg', instanceId: this.generateComponentId('c-l') },
-            { title: 'Fußball', picked: false, image: '/static/assets/images/category/list/cat_sports_football_bkg.jpg', instanceId: this.generateComponentId('c-l') }
+            { categoryId: '0001', title: 'pokemon pikachiu', picked: false, image: '/static/assets/images/category/list/cat_toy_pokemon_pikachiu_bkg.jpg', instanceId: this.generateComponentId('c-l') },
+            { categoryId: '0001', title: 'Fußball', picked: false, image: '/static/assets/images/category/list/cat_sports_football_bkg.jpg', instanceId: this.generateComponentId('c-l') }
           ]
         },
-        { title: 'popular', picked: false, image: '/static/assets/images/category/cat_popular_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
+        { id: '0002', title: 'popular', picked: false, image: '/static/assets/images/category/cat_popular_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
       ],
       suggestedCats: [
-        { title: 'clothings', picked: false, image: '/static/assets/images/category/cat_clothings_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
-        { title: 'beverage', picked: false, image: '/static/assets/images/category/cat_beverage_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
-        { title: 'cakes', picked: false, image: '/static/assets/images/category/cat_cakes_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { id: '000a', title: 'clothings', picked: false, image: '/static/assets/images/category/cat_clothings_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { id: '000b', title: 'beverage', picked: false, image: '/static/assets/images/category/cat_beverage_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
+        { id: '000c', title: 'cakes', picked: false, image: '/static/assets/images/category/cat_cakes_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') },
         {
+          id: '000d',
           title: 'toys',
           picked: false,
           image: '/static/assets/images/category/cat_toys_bkg_btn.jpg',
           instanceId: this.generateComponentId('c-b'),
           itemList: [
-            { title: 'Русская матрешка', picked: false, image: '/static/assets/images/category/list/cat_toys_russian_doll_bkg.jpg', instanceId: this.generateComponentId('c-l') },
-            { title: 'basketball fever', picked: false, image: '/static/assets/images/category/list/cat_toys_basketball_bkg.jpg', instanceId: this.generateComponentId('c-l') }
+            { categoryId: '000d', title: 'Русская матрешка', picked: false, image: '/static/assets/images/category/list/cat_toys_russian_doll_bkg.jpg', instanceId: this.generateComponentId('c-l') },
+            { categoryId: '000d', title: 'basketball fever', picked: false, image: '/static/assets/images/category/list/cat_toys_basketball_bkg.jpg', instanceId: this.generateComponentId('c-l') }
           ]
         }
       ]
@@ -106,9 +128,24 @@ export default {
       this.componentIdList.push(id)
       return id
     },
+    _isComponentDuplicated: function (component) {
+      // criteria => id match test
+      let dupCnt = 0
+      for (let i = 0; i < this.pickedComponentList.length; i++) {
+        if (this.pickedComponentList[i].id === component.id) {
+          dupCnt++
+        }
+      }
+      if (dupCnt > 1) {
+        return true
+      } else {
+        return false
+      }
+    },
     handleCatBtnClick: function (params) {
       // update the componentsInfo's picked status
       // depends on the biz logic, you might want to de-activate other components' picked status
+      // check duplication of component
       let component = this._getComponentByInstanceId(params.instanceId)
       if (component) {
         component.picked = params.picked
@@ -167,6 +204,94 @@ export default {
         }
       })
       return itemList
+    },
+    /**
+     *  back button event handler
+     */
+    fwdToInfo: function (e) {
+      e.preventDefault()
+      this.$router.push({
+        name: 'templateinfoview'
+      })
+    },
+    /**
+     *  next button event handler
+     */
+    fwdToPreview: function (e) {
+      e.preventDefault()
+      // validation on if any real background picked
+      if (!this.pickedImageList || this.pickedImageList.length === 0) {
+        alert('you need to pick at least 1 background image for the banner generation')
+      } else {
+        // update the vuex store...
+        window.DataStore.commit('template/setTemplateBackgroundPicker', {
+          pickedImageList: this.pickedImageList,
+          pickedCategoryList: this.pickedComponentList
+        })
+        this.$router.push({
+          name: 'templatecategorypreviewview'
+        })
+      }
+    },
+    /**
+     *  handles the event of option image / background being click
+     */
+    handleOptionImageClick: function (params) {
+      this.pickedImageList = params.pickedImageList
+    },
+    /**
+     *  handles the event of "save" button
+     */
+    handleSaveImgList: function () {
+      // save states to vuex
+      // update the vuex store...
+      window.DataStore.commit('template/setTemplateBackgroundPicker', {
+        pickedImageList: this.pickedImageList,
+        pickedCategoryList: this.pickedComponentList
+      })
+    },
+    /**
+     *  method to check if the pickedImageList has been changed
+     */
+    isInfoChanged: function () {
+      // TODO: logic changed in the pickedImageList content { categoryId, image ... }
+      let stateList = window.DataStore.state.template.pickedImageList
+
+      if (stateList.length !== this.pickedImageList.length) {
+        return true
+      } else {
+        // member check
+        let len = stateList.length
+        for (let i = 0; i < len; i++) {
+          let curImg = stateList[i]
+          if (this.pickedImageList.indexOf(curImg) === -1) {
+            return true
+          }
+        } // end -- for (iteration of the img list)
+      }
+      return false
+    }
+  },
+  /**
+   *  lifecycle hooks to warn if modified fields are to be disposed
+   */
+  beforeRouteLeave (to, from, next) {
+    // add logic to check if any changes made
+    if (this.isInfoChanged() === true) {
+      // back button
+      if (to.name === 'templateinfoview') {
+        if (confirm('there are changes on the picked image(s), would you like to proceed without saving?') === true) {
+          next(true)
+        }
+      } else if (to.name === 'templatecategorypreviewview') {
+        // update the vuex store...
+        window.DataStore.commit('template/setTemplateBackgroundPicker', {
+          pickedImageList: this.pickedImageList
+        })
+        next(true)
+      }
+    } else {
+      next(true)
     }
   },
   // ** set the child components here => categoryComp = <category-comp>

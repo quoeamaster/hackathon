@@ -6,13 +6,13 @@
                                    :key="item.instanceId"
                                    v-on:onCategoryListOptionClick="handleListOptionClick"
                                    v-on:onCategoryListOptionImgPreview="handleListOptionImgPreview"
+                                   v-bind:categoryId="item.categoryId"
                                    v-bind:image="item.image"
                                    v-bind:picked="item.picked"
                                    v-bind:title="item.title"
                                    v-bind:instanceId="item.instanceId"></category-list-option-comp>
       </div>
     </div>
-    <button class="btn btn-primary">next</button>
     <!-- modal lightbox -->
     <div v-bind:style="getLightboxStyle()" class="lbox-modal">
       <span class="lbox-close" @click="closeLightbox()">&times;</span>
@@ -82,7 +82,9 @@ import CategoryListOptionComp from '@/components/template/TemplateCategoryListOp
 function ModelTemplateCategoryListComponent () {
   return {
     'showLightbox': false,
-    'lightboxImage': ''
+    'lightboxImage': '',
+    // TODO: change from simply image url => { imageUrl, categoryId }
+    'pickedImageList': []
   }
 }
 
@@ -100,7 +102,29 @@ export default {
       let item = this._getItemByInstanceId(params.instanceId)
       if (item) {
         item.picked = params.picked
+        // update the pickedImageList[]
+        this._updateListOption(item)
+        // raiseEvent back to parent
+        this.$emit('onOptionImageClick', {
+          'pickedImageList': this.pickedImageList
+        })
       }
+    },
+    _updateListOption: function (item) {
+      if (item) {
+        let exists = window.CollectionUtil.iterateArrayForMatching(this.pickedImageList, function (imageObj) {
+          if (imageObj.image === item.image) {
+            return true
+          }
+          return false
+        })
+
+        if (item.picked === true && exists === -1) {
+          this.pickedImageList.push(item)
+        } else if (item.picked === false && exists !== -1) {
+          this.pickedImageList.splice(exists, 1)
+        }
+      } // end -- if (item) is valid
     },
     handleListOptionImgPreview: function (params) {
       this.lightboxImage = params['image']

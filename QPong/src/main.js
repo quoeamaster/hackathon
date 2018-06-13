@@ -17,9 +17,11 @@ import 'jquery/dist/jquery.js'
 // add services to the window object
 import JQueryService from './services/JQueryService.vue'
 import IdGenerator from './services/idGenerator'
+import CollectionUtil from './services/collectionUtil'
 
 window.JQueryService = JQueryService
 window.DataStore = DataStore
+window.CollectionUtil = CollectionUtil
 window.IdGenerator = IdGenerator
 Vue.config.productionTip = false
 

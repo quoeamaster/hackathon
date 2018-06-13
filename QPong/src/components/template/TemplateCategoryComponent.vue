@@ -62,6 +62,12 @@ export default {
     setTimeout(function () {
       ref.dummy = !ref.dummy
     }, 1)
+
+    /*
+    if (window.DataStore.getters['template/categoryItemById'](this.id) !== null) {
+      this.pickedFromStore = true
+    }
+    */
   },
   methods: {
     raiseEvent: function () {
@@ -74,7 +80,8 @@ export default {
      * should display the icon-checked?
      */
     getIconCheckedCss: function () {
-      if (this.picked) {
+      // show the checked mark either by the props.picked or state.picked
+      if (this.picked || this.pickedFromStore) {
         return { 'c-visible': true, 'c-hidden': false }
       } else {
         return { 'c-visible': false, 'c-hidden': true }
@@ -121,7 +128,7 @@ export default {
   },
   // instanceId = id of this component; useful to identify which component it is
   // when multiple instances are available within a view
-  props: [ 'instanceId', 'title', 'image', 'picked' ],
+  props: [ 'instanceId', 'id', 'title', 'image', 'picked' ],
   computed: {
     componentId: function () {
       return this.instanceId

@@ -90,7 +90,7 @@ export default {
   data: function () {
     return new ModelTemplateCategoryListOptionComponent()
   },
-  props: [ 'instanceId', 'image', 'picked', 'title' ],
+  props: [ 'instanceId', 'image', 'picked', 'title', 'categoryId' ],
   methods: {
     /**
      *  css method
@@ -111,7 +111,9 @@ export default {
       this.$emit('onCategoryListOptionClick', {
         instanceId: this.instanceId,
         picked: !this.picked,
-        image: this.image
+        image: this.image,
+        // parent "category"
+        categoryId: this.categoryId
       })
     },
     /**

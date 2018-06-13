@@ -6,6 +6,7 @@ import TemplateContainerVue from '@/components/template/TemplateContainer'
 import TemplateHelpVue from '@/components/template/TemplateHelp'
 import TemplateInfoView from '@/components/template/TemplateInfoView'
 import TemplateBackgroundPickerView from '@/components/template/TemplateBackgroundPickerView'
+import TemplateCategoryPreviewView from '@/components/template/TemplateCategoryPreviewView'
 
 Vue.use(Router)
 
@@ -32,6 +33,11 @@ export default new Router({
           path: 'backgrdPicker',
           name: 'templatebackgroundpickerview',
           component: TemplateBackgroundPickerView
+        },
+        {
+          path: 'preview',
+          name: 'templatecategorypreviewview',
+          component: TemplateCategoryPreviewView
         }
       ]
     },

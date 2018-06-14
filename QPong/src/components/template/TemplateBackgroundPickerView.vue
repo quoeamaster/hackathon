@@ -65,7 +65,13 @@ function ModelTemplateBackgroundPickerView () {
     // the picked component(s)
     pickedComponentList: [],
     // the picked image option list
-    pickedImageList: []
+    pickedImageList: [],
+
+    /* data from store */
+    store: {
+      pickedComponentList: [],
+      pickedImageList: []
+    }
   }
 }
 
@@ -77,8 +83,10 @@ export default {
   mounted: function () {
     // update the state's pickedImageList
     // TODO: handle the imageList and componentList updates on the array
-    // this.pickedImageList = window.DataStore.state.template.pickedImageList
-    // this.pickedComponentList = window.DataStore.state.template.pickedCategoryList
+    // TODO: eg. get back the comp list and image list; then iterate thru the componentsInfo queried from a "service";
+    // TODO: update the corresponding item's "picked" status
+    this.store.pickedComponentList = window.DataStore.state.template.pickedComponentList
+    this.store.pickedImageList = window.DataStore.state.template.pickedImageList
 
     // TODO call service to load the suitable categories from QPong server (etc); MOCKUP for now
     this.componentsInfo = {
@@ -254,9 +262,8 @@ export default {
      *  method to check if the pickedImageList has been changed
      */
     isInfoChanged: function () {
-      // TODO: logic changed in the pickedImageList content { categoryId, image ... }
+      // logic changed in the pickedImageList content { categoryId, image ... }
       let stateList = window.DataStore.state.template.pickedImageList
-
       if (stateList.length !== this.pickedImageList.length) {
         return true
       } else {
@@ -264,7 +271,14 @@ export default {
         let len = stateList.length
         for (let i = 0; i < len; i++) {
           let curImg = stateList[i]
-          if (this.pickedImageList.indexOf(curImg) === -1) {
+          let exists = window.CollectionUtil.iterateArrayForMatching(this.pickedImageList, function (itemObj) {
+            if (itemObj.image === curImg.image) {
+              return true
+            }
+            return false
+          })
+
+          if (exists === -1) {
             return true
           }
         } // end -- for (iteration of the img list)

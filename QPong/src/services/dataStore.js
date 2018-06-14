@@ -12,8 +12,17 @@ let modTemplate = {
     title: '',
     subtitle: '',
     description: '',
-    // background picker view related field(s)
+    /*
+     *  background picker view related field(s)
+     *  categoryId => id for the parent category
+     *  image => img url picked
+     */
     pickedImageList: [],
+    /*
+     *  id => category id
+     *  title => caption for this category
+     *  image => background image for this category
+     */
     pickedCategoryList: []
   },
   mutations: {

@@ -65,13 +65,7 @@ function ModelTemplateBackgroundPickerView () {
     // the picked component(s)
     pickedComponentList: [],
     // the picked image option list
-    pickedImageList: [],
-
-    /* data from store */
-    store: {
-      pickedComponentList: [],
-      pickedImageList: []
-    }
+    pickedImageList: []
   }
 }
 
@@ -81,13 +75,7 @@ export default {
     return new ModelTemplateBackgroundPickerView()
   },
   mounted: function () {
-    // update the state's pickedImageList
-    // TODO: handle the imageList and componentList updates on the array
-    // TODO: eg. get back the comp list and image list; then iterate thru the componentsInfo queried from a "service";
-    // TODO: update the corresponding item's "picked" status
-    this.store.pickedComponentList = window.DataStore.state.template.pickedComponentList
-    this.store.pickedImageList = window.DataStore.state.template.pickedImageList
-
+    const ref = this
     // TODO call service to load the suitable categories from QPong server (etc); MOCKUP for now
     this.componentsInfo = {
       commonCats: [
@@ -121,6 +109,45 @@ export default {
         }
       ]
     } // setting the componentsInfo (mockup for now...)
+
+    // update the state's pickedImageList
+    // TODO: handle the imageList and componentList updates on the array
+    // TODO: eg. get back the comp list and image list; then iterate thru the componentsInfo queried from a "service";
+    // TODO: update the corresponding item's "picked" status
+    let sPickedComponentList = window.DataStore.state.template.pickedCategoryList
+    let sPickedImageList = window.DataStore.state.template.pickedImageList
+    console.log(sPickedImageList + '***')
+    // commonCats
+    window.CollectionUtil.iterateArrayForModification(this.componentsInfo.commonCats, function (itemObj) {
+      let idx = window.CollectionUtil.iterateArrayForMatching(sPickedComponentList, function (curComp) {
+        if (curComp.id === itemObj.id) {
+          return true
+        }
+        return false
+      }) // got the idx for the matched category
+      if (idx !== -1) {
+        itemObj.picked = true
+        ref.pickedComponentList.push(itemObj)
+      }
+      // no modification => true (default)
+      return true
+    })
+    // suggestedCats
+    window.CollectionUtil.iterateArrayForModification(this.componentsInfo.suggestedCats, function (itemObj) {
+      let idx = window.CollectionUtil.iterateArrayForMatching(sPickedComponentList, function (curComp) {
+        if (curComp.id === itemObj.id) {
+          return true
+        }
+        return false
+      }) // got the idx for the matched category
+      if (idx !== -1) {
+        itemObj.picked = true
+        ref.pickedComponentList.push(itemObj)
+      }
+      // no modification => true (default)
+      return true
+    })
+    // TODO: handle the imageList
   },
   methods: {
     /**
@@ -154,39 +181,41 @@ export default {
       // update the componentsInfo's picked status
       // depends on the biz logic, you might want to de-activate other components' picked status
       // check duplication of component
-      let component = this._getComponentByInstanceId(params.instanceId)
-      if (component) {
+      const ref = this
+      let component = this._getComponentByInstanceIdNCategoryId(params.instanceId, params.categoryId)
+      if (component && this._isComponentDuplicated(component) === false) {
         component.picked = params.picked
 
         // update the pickedComponentList
         if (params.picked) {
           this.pickedComponentList.push(component)
         } else {
-          let size = this.pickedComponentList.length
-          for (let i = (size - 1); i >= 0; i--) {
-            let item = this.pickedComponentList[i]
-            if (item.instanceId === params.instanceId) {
-              // reset the inner itemList "picked" value as well
-              if (!item.itemList) {
-                continue
+          // uncheck case
+          let exists = window.CollectionUtil.iterateArrayForModification(this.pickedComponentList, function (itemObj, idx) {
+            if (itemObj.id === component.id || itemObj.instanceId === component.instanceId) {
+              if (itemObj.itemList) {
+                window.CollectionUtil.iterateArrayForModification(itemObj.itemList, function (innerItemObj) {
+                  innerItemObj.picked = false
+                  return true
+                })
               }
-              let size1 = item.itemList.length
-              for (let i1 = 0; i1 < size1; i1++) {
-                item.itemList[i1].picked = false
-              }
-              // remove this component
-              this.pickedComponentList.splice(i, 1)
+              // remove the category
+              ref.pickedComponentList.splice(idx, 1)
             }
+            return true
+          })
+          if (exists !== -1) {
+            console.log('something wrong... with the iteration and modification process')
           }
         } // end -- if (params.picked == true)
       }
     },
-    _getComponentByInstanceId: function (iId) {
+    _getComponentByInstanceIdNCategoryId: function (iId, iCatId) {
       let compList = this.componentsInfo.commonCats
       // try commonCats
       for (let i = 0; i < compList.length; i++) {
         let item = compList[i]
-        if (item.instanceId === iId) {
+        if (item.instanceId === iId || item.id === iCatId) {
           return item
         }
       }
@@ -194,7 +223,7 @@ export default {
       compList = this.componentsInfo.suggestedCats
       for (let i = 0; i < compList.length; i++) {
         let item = compList[i]
-        if (item.instanceId === iId) {
+        if (item.instanceId === iId || item.id === iCatId) {
           return item
         }
       }

@@ -73,7 +73,8 @@ export default {
     raiseEvent: function () {
       this.$emit('onCategoryButtonClick', {
         instanceId: this.componentId,
-        picked: !this.picked
+        picked: !this.picked,
+        categoryId: this.id
       })
     },
     /**

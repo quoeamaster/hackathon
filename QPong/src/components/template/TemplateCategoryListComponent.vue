@@ -10,6 +10,7 @@
                                    v-bind:image="item.image"
                                    v-bind:picked="item.picked"
                                    v-bind:title="item.title"
+                                   v-bind:id="item.id"
                                    v-bind:instanceId="item.instanceId"></category-list-option-comp>
       </div>
     </div>
@@ -93,13 +94,30 @@ export default {
   data: function () {
     return new ModelTemplateCategoryListComponent()
   },
+  /* watch specific properties */
+  watch: {
+    itemList: function (newItemList, oldItemList) {
+      // loop through and check if the sub itemList(s) contains picked === true;
+      // put back to this.pickedImageList
+      const ref = this
+      window.CollectionUtil.iterateArrayForModification(newItemList, function (itemObj) {
+        if (itemObj.picked === true) {
+          // TODO: de-duplicate... by image value and id
+          ref.pickedImageList.push(itemObj)
+          return true
+        }
+        // let it pass anyway
+        return true
+      })
+    }
+  },
   methods: {
     /**
      * handler for the category-list-option being picked
      * @param params
      */
     handleListOptionClick: function (params) {
-      let item = this._getItemByInstanceId(params.instanceId)
+      let item = this._getItemByItemId(params.instanceId, params.id)
       if (item) {
         item.picked = params.picked
         // update the pickedImageList[]
@@ -110,7 +128,21 @@ export default {
         })
       }
     },
+    _getItemByItemId: function (iId, id) {
+      let exists = window.CollectionUtil.iterateArrayForMatching(this.itemList, function (itemObj) {
+        // || itemObj.instanceId === iId (this is not a good criteria for matching, id is unique over time
+        if (itemObj.id === id) {
+          return true
+        }
+        return false
+      })
+      if (exists !== -1) {
+        return this.itemList[exists]
+      }
+      return null
+    },
     _updateListOption: function (item) {
+      console.log(this.pickedImageList)
       if (item) {
         let exists = window.CollectionUtil.iterateArrayForMatching(this.pickedImageList, function (imageObj) {
           if (imageObj.image === item.image) {
@@ -129,14 +161,6 @@ export default {
     handleListOptionImgPreview: function (params) {
       this.lightboxImage = params['image']
       this.showLightbox = true
-    },
-    _getItemByInstanceId: function (iId) {
-      for (let i = 0; i < this.itemList.length; i++) {
-        let item = this.itemList[i]
-        if (item.instanceId === iId) {
-          return item
-        }
-      } // end -- for (itemList)
     },
     getLightboxStyle: function () {
       if (this.showLightbox === true) {

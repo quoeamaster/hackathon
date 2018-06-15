@@ -186,7 +186,7 @@ export default {
           } // end -- if (itemObj and itemObj.itemList valid)
         })
       })
-      console.log(this.pickedImageList)
+      // console.log(this.pickedImageList)
     }
   },
   methods: {

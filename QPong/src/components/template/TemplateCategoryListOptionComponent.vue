@@ -90,7 +90,7 @@ export default {
   data: function () {
     return new ModelTemplateCategoryListOptionComponent()
   },
-  props: [ 'instanceId', 'image', 'picked', 'title', 'categoryId' ],
+  props: [ 'instanceId', 'image', 'picked', 'title', 'categoryId', 'id' ],
   methods: {
     /**
      *  css method

@@ -113,7 +113,9 @@ export default {
         picked: !this.picked,
         image: this.image,
         // parent "category"
-        categoryId: this.categoryId
+        categoryId: this.categoryId,
+        // the current option's id
+        id: this.id
       })
     },
     /**

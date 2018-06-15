@@ -86,8 +86,8 @@ export default {
           image: '/static/assets/images/category/cat_common_bkg_btn.jpg',
           instanceId: this.generateComponentId('c-b'),
           itemList: [
-            { categoryId: '0001', title: 'pokemon pikachiu', picked: false, image: '/static/assets/images/category/list/cat_toy_pokemon_pikachiu_bkg.jpg', instanceId: this.generateComponentId('c-l') },
-            { categoryId: '0001', title: 'Fußball', picked: false, image: '/static/assets/images/category/list/cat_sports_football_bkg.jpg', instanceId: this.generateComponentId('c-l') }
+            { id: 'a001', categoryId: '0001', title: 'pokemon pikachiu', picked: false, image: '/static/assets/images/category/list/cat_toy_pokemon_pikachiu_bkg.jpg', instanceId: this.generateComponentId('c-l') },
+            { id: 'a002', categoryId: '0001', title: 'Fußball', picked: false, image: '/static/assets/images/category/list/cat_sports_football_bkg.jpg', instanceId: this.generateComponentId('c-l') }
           ]
         },
         { id: '0002', title: 'popular', picked: false, image: '/static/assets/images/category/cat_popular_bkg_btn.jpg', instanceId: this.generateComponentId('c-b') }
@@ -103,8 +103,8 @@ export default {
           image: '/static/assets/images/category/cat_toys_bkg_btn.jpg',
           instanceId: this.generateComponentId('c-b'),
           itemList: [
-            { categoryId: '000d', title: 'Русская матрешка', picked: false, image: '/static/assets/images/category/list/cat_toys_russian_doll_bkg.jpg', instanceId: this.generateComponentId('c-l') },
-            { categoryId: '000d', title: 'basketball fever', picked: false, image: '/static/assets/images/category/list/cat_toys_basketball_bkg.jpg', instanceId: this.generateComponentId('c-l') }
+            { id: 'a010', categoryId: '000d', title: 'Русская матрешка', picked: false, image: '/static/assets/images/category/list/cat_toys_russian_doll_bkg.jpg', instanceId: this.generateComponentId('c-l') },
+            { id: 'a011', categoryId: '000d', title: 'basketball fever', picked: false, image: '/static/assets/images/category/list/cat_toys_basketball_bkg.jpg', instanceId: this.generateComponentId('c-l') }
           ]
         }
       ]
@@ -116,7 +116,6 @@ export default {
     // TODO: update the corresponding item's "picked" status
     let sPickedComponentList = window.DataStore.state.template.pickedCategoryList
     let sPickedImageList = window.DataStore.state.template.pickedImageList
-    console.log(sPickedImageList + '***')
     // commonCats
     window.CollectionUtil.iterateArrayForModification(this.componentsInfo.commonCats, function (itemObj) {
       let idx = window.CollectionUtil.iterateArrayForMatching(sPickedComponentList, function (curComp) {
@@ -147,7 +146,48 @@ export default {
       // no modification => true (default)
       return true
     })
-    // TODO: handle the imageList
+    // handle the imageList
+    // TODO: something wrong when the option list component has been clicked...
+    if (sPickedImageList && sPickedImageList.length > 0) {
+      window.CollectionUtil.iterateArrayForModification(sPickedImageList, function (pickedImgItem) {
+        window.CollectionUtil.iterateArrayForModification(ref.componentsInfo.commonCats, function (itemObj) {
+          if (itemObj && itemObj.itemList) {
+            let exists2 = window.CollectionUtil.iterateArrayForMatching(itemObj.itemList, function (innerObj) {
+              if (pickedImgItem.id === innerObj.id && pickedImgItem.categoryId === innerObj.categoryId) {
+                return true
+              } // end -- if (categoryId and id MATCHED)
+              return false
+            })
+            if (exists2 !== -1) {
+              let imgItem = itemObj.itemList[exists2]
+              imgItem.picked = true
+              ref.pickedImageList.push(imgItem)
+              return true
+            } // end -- if exist2 != -1; update the "picked" property
+            return true // assume even no modification should be TRUE (anyway just a small issue)
+          } // end -- if (itemObj and itemObj.itemList valid)
+        })
+        // suggestedCats
+        window.CollectionUtil.iterateArrayForModification(ref.componentsInfo.suggestedCats, function (itemObj) {
+          if (itemObj && itemObj.itemList) {
+            let exists2 = window.CollectionUtil.iterateArrayForMatching(itemObj.itemList, function (innerObj) {
+              if (pickedImgItem.id === innerObj.id && pickedImgItem.categoryId === innerObj.categoryId) {
+                return true
+              } // end -- if (categoryId and id MATCHED)
+              return false
+            })
+            if (exists2 !== -1) {
+              let imgItem = itemObj.itemList[exists2]
+              imgItem.picked = true
+              ref.pickedImageList.push(imgItem)
+              return true
+            } // end -- if exist2 != -1; update the "picked" property
+            return true // assume even no modification should be TRUE (anyway just a small issue)
+          } // end -- if (itemObj and itemObj.itemList valid)
+        })
+      })
+      console.log(this.pickedImageList)
+    }
   },
   methods: {
     /**

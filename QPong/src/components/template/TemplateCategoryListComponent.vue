@@ -102,8 +102,17 @@ export default {
       const ref = this
       window.CollectionUtil.iterateArrayForModification(newItemList, function (itemObj) {
         if (itemObj.picked === true) {
-          // TODO: de-duplicate... by image value and id
-          ref.pickedImageList.push(itemObj)
+          // de-duplicate... by image value and id
+          let exists = window.CollectionUtil.iterateArrayForMatching(ref.pickedImageList, function (imgItemObj) {
+            if (imgItemObj && imgItemObj.id === itemObj.id) {
+              return true
+            }
+            return false
+          })
+          // only non existed entries should be added
+          if (exists === -1) {
+            ref.pickedImageList.push(itemObj)
+          }
           return true
         }
         // let it pass anyway

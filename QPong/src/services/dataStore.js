@@ -8,10 +8,14 @@ Vue.use(Vuex)
 let modTemplate = {
   namespaced: true,
   state: {
+    // the project-id (if any)
+    projectId: '',
+
     // info view related field(s)
     title: '',
     subtitle: '',
     description: '',
+
     /*
      *  background picker view related field(s)
      *  categoryId => id for the parent category
@@ -36,6 +40,10 @@ let modTemplate = {
     setTemplateBackgroundPicker (state, model) {
       state.pickedImageList = model['pickedImageList']
       state.pickedCategoryList = model['pickedCategoryList']
+    },
+    // set the project-id
+    setProjectId (state, model) {
+      state.projectId = model['projectId']
     }
   },
   getters: {
@@ -55,6 +63,31 @@ let modTemplate = {
           }
           return null
         }
+      }
+    },
+    /**
+     * return the data-model all in 1
+     * @param state
+     * @returns {{projectId: *, title: *, subtitle: *, description: *, pickedImageList: *, pickedCategoryList: *}}
+     */
+    dataModel: function (state) {
+      let imgList = state.pickedImageList
+      let catList = state.pickedCategoryList
+
+      if (imgList && imgList.length > 0) {
+        imgList = imgList.join()
+      }
+      if (catList && catList.length > 0) {
+        catList = catList.join()
+      }
+
+      return {
+        projectId: state.projectId,
+        title: state.title,
+        subtitle: state.subtitle,
+        description: state.description,
+        pickedImages: imgList,
+        pickedCategories: catList
       }
     }
   }

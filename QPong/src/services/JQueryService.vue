@@ -51,6 +51,15 @@ export default {
     return new ModelJQueryService()
   },
   methods: {
+    /**
+     * method to perform ajax upload
+     * @param jqueryObj
+     * @param url
+     * @param headers
+     * @param formData
+     * @param successFx
+     * @param failFx
+     */
     ajaxUpload: function (jqueryObj, url, headers, formData, successFx, failFx) {
       let finalHeaders = {}
       let finalFormData = null
@@ -92,6 +101,48 @@ export default {
         }
       })
       // end -- ajax call
+    },
+    /**
+     * ajax GET method
+     * @param jqueryObj
+     * @param url
+     * @param headers
+     * @param data
+     * @param successFx
+     * @param failFx
+     */
+    ajaxGet: function (jqueryObj, url, headers, data, successFx, failFx) {
+      let finalSuccess = defaultAjaxSuccessFx
+      let finalFail = defaultAjaxFailFx
+      let finalHeaders = {}
+      // start validation
+      if (!jqueryObj) {
+        defaultAjaxFailFx(null, 'jQuery object is NULL or invalid', null, true)
+      }
+      if (successFx) {
+        finalSuccess = successFx
+      }
+      if (failFx) {
+        finalFail = failFx
+      }
+      if (headers) {
+        finalHeaders = headers
+      }
+      // run the ajax GET
+      jqueryObj.ajax({
+        url: url,
+        type: 'GET',
+        headers: finalHeaders,
+        data: data,
+        cache: false,
+        success: function (data, textStatus, jqXHR) {
+          finalSuccess(data, textStatus, jqXHR, true)
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          finalFail(jqXHR, textStatus, errorThrown, false)
+        }
+      })
+      // end -- ajax GET
     }
   }
 }

@@ -68,8 +68,21 @@ export default {
     this.title = window.DataStore.state.template.title
     this.subtitle = window.DataStore.state.template.subtitle
     this.description = window.DataStore.state.template.description
+
+    this.initProjectId()
   },
   methods: {
+    /**
+     *  method to init / create the project-id
+     */
+    initProjectId: function () {
+      let pId = window.DataStore.state.template.projectId
+
+      if (!pId || pId === '') {
+        pId = window.IdGenerator.generateProjectId()
+        window.DataStore.commit('template/setProjectId', { projectId: pId })
+      } // end -- if (invalid projectId)
+    },
     fwdTemplateBackgroundPicker: function () {
       // update the states
       window.DataStore.commit(

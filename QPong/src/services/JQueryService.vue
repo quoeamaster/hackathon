@@ -135,6 +135,7 @@ export default {
         headers: finalHeaders,
         data: data,
         cache: false,
+        dataType: 'json',
         success: function (data, textStatus, jqXHR) {
           finalSuccess(data, textStatus, jqXHR, true)
         },

@@ -151,7 +151,7 @@ export default {
       return null
     },
     _updateListOption: function (item) {
-      console.log(this.pickedImageList)
+      // console.log(this.pickedImageList)
       if (item) {
         let exists = window.CollectionUtil.iterateArrayForMatching(this.pickedImageList, function (imageObj) {
           if (imageObj.image === item.image) {

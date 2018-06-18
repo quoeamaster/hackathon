@@ -2,6 +2,8 @@
   <div>
     to be detailed<p/>
     {{ testing() }}
+    <p/>
+    <button class="btn btn-primary" @click="issueCommand">ok</button>
   </div>
 </template>
 
@@ -24,9 +26,14 @@ export default {
     ref.getLayoutSuggestionFromQPongServer()
   },
   methods: {
+    issueCommand: function () {
+      this.getLayoutSuggestionFromQPongServer()
+    },
+
     getLayoutSuggestionFromQPongServer: function () {
       // window.DataStore.state.template.projectId
       let formData = window.DataStore.getters['template/dataModel']
+      console.log(formData)
 
       window.JQueryService.methods.ajaxGet(window.jQuery,
         'http://localhost:8081/template/suggestLayout',

@@ -71,23 +71,13 @@ let modTemplate = {
      * @returns {{projectId: *, title: *, subtitle: *, description: *, pickedImageList: *, pickedCategoryList: *}}
      */
     dataModel: function (state) {
-      let imgList = state.pickedImageList
-      let catList = state.pickedCategoryList
-
-      if (imgList && imgList.length > 0) {
-        imgList = imgList.join()
-      }
-      if (catList && catList.length > 0) {
-        catList = catList.join()
-      }
-
       return {
         projectId: state.projectId,
         title: state.title,
         subtitle: state.subtitle,
         description: state.description,
-        pickedImages: imgList,
-        pickedCategories: catList
+        pickedImageList: state.pickedImageList,
+        pickedCategoryList: state.pickedCategoryList
       }
     }
   }

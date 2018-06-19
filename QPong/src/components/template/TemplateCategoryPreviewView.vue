@@ -33,7 +33,6 @@ export default {
     getLayoutSuggestionFromQPongServer: function () {
       // window.DataStore.state.template.projectId
       let formData = window.DataStore.getters['template/dataModel']
-      console.log(formData)
 
       window.JQueryService.methods.ajaxGet(window.jQuery,
         'http://localhost:8081/template/suggestLayout',
